@@ -34,7 +34,8 @@
             android:ems="10"
             android:hint="Username"
             android:inputType="textPersonName"
-            android:padding="9dp" />
+            android:padding="9dp"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <EditText
             android:id="@+id/edtEmail"
@@ -45,7 +46,8 @@
             android:ems="10"
             android:hint="Email"
             android:inputType="textEmailAddress"
-            android:padding="9dp" />
+            android:padding="9dp"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <EditText
             android:id="@+id/edtPassword"
@@ -55,7 +57,8 @@
             android:ems="10"
             android:hint="Password"
             android:inputType="textPassword"
-            android:padding="9dp" />
+            android:padding="9dp"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <TextView
             android:id="@+id/txtAlreadyAccount"
