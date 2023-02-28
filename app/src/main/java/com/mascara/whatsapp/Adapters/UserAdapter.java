@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.mascara.whatsapp.ChatDetailActivity;
 import com.mascara.whatsapp.Models.Users;
 import com.mascara.whatsapp.R;
@@ -42,6 +44,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder>{
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         Users user = usersList.get(position);
         holder.setDataForUserItem(user);
+
+//        FirebaseDatabase.getInstance().getReference().child("chats")
+//                        .child(FirebaseAuth.getInstance().getUid() + user.getUserId())
+//                                .orderByChild("timestamp")
+//                                        .limitToLast(1)
+//                                                .addListenerForSingleValueEvent();
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
