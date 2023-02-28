@@ -58,7 +58,7 @@ public class ChatsFragment extends Fragment {
         firebaseDatabase.getReference().child("Users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                //userList.clear();
+                userList.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Users user = dataSnapshot.getValue(Users.class);
                     user.setUserId(dataSnapshot.getKey());
