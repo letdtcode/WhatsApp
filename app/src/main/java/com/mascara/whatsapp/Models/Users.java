@@ -1,16 +1,42 @@
 package com.mascara.whatsapp.Models;
 
-public class Users {
-    private String profilePic, userName, mail, password, userId, lastMessage;
+import com.google.firebase.database.PropertyName;
 
-    public Users(String profilePic, String userName, String mail, String password, String userId, String lastMessage) {
+public class Users {
+    @PropertyName("profilepic")
+    private String profilePic;
+
+    @PropertyName("userName")
+    private String userName;
+
+
+    @PropertyName("mail")
+    private String mail;
+
+    @PropertyName("password")
+    private String password;
+
+    @PropertyName("userId")
+    private String userId;
+
+    @PropertyName("status")
+    private String status;
+
+
+
+    @PropertyName("lastMessage")
+    private String lastMessage;
+
+    public Users(String profilePic, String userName, String mail, String password, String userId, String status, String lastMessage) {
         this.profilePic = profilePic;
         this.userName = userName;
         this.mail = mail;
         this.password = password;
         this.userId = userId;
+        this.status = status;
         this.lastMessage = lastMessage;
     }
+
     public Users() {
     }
     //Sign Up constructor
@@ -65,5 +91,12 @@ public class Users {
 
     public void setLastMessage(String lastMessage) {
         this.lastMessage = lastMessage;
+    }
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

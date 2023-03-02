@@ -23,6 +23,8 @@ import com.mascara.whatsapp.Models.Users;
 import com.mascara.whatsapp.databinding.ActivitySettingsBinding;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
+
 public class SettingsActivity extends AppCompatActivity {
 
     private ActivitySettingsBinding binding;
@@ -49,6 +51,22 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        binding.saveBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String status = binding.edtStatus.getText().toString();
+                String userName = binding.edtUserName.getText().toString();
+
+                HashMap<String, Object> obj = new HashMap<>();
+                obj.put("userName", userName);
+                obj.put("status", status);
+
+                firebaseDatabase.getReference().child("Users").child(FirebaseAuth.getInstance().getUid())
+                        .updateChildren(obj);
+                Toast.makeText(SettingsActivity.this, "Cập nhật profile thành công !", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         firebaseDatabase.getReference().child("Users").child(FirebaseAuth.getInstance().getUid())
                         .addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -58,6 +76,9 @@ public class SettingsActivity extends AppCompatActivity {
                                         .load(user.getProfilePic())
                                         .placeholder(R.drawable.man_avatar)
                                         .into(binding.profileImage);
+
+                                binding.edtStatus.setText(user.getStatus());
+                                binding.edtUserName.setText(user.getUserName());
                             }
 
                             @Override
