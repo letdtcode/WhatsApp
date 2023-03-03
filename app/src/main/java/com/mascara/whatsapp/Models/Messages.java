@@ -1,8 +1,31 @@
 package com.mascara.whatsapp.Models;
 
+import com.google.firebase.database.PropertyName;
+
 public class Messages {
-    private String uId, message;
+
+    @PropertyName("uId")
+    private String uId;
+
+    @PropertyName("message")
+    private String message;
+
+    @PropertyName("messageId")
+    private String messageId;
+
+    @PropertyName("timestamp")
     private Long timestamp;
+
+    @PropertyName("sttMessage")
+    private int sttMessage;
+
+    public int getSttMessage() {
+        return sttMessage;
+    }
+
+    public void setSttMessage(int sttMessage) {
+        this.sttMessage = sttMessage;
+    }
 
     public Messages(String uId, String message, Long timestamp) {
         this.uId = uId;
@@ -16,6 +39,14 @@ public class Messages {
     }
 
     public Messages() {
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 
     public String getuId() {
