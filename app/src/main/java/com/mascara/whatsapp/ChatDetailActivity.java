@@ -19,8 +19,10 @@ import com.mascara.whatsapp.Models.Messages;
 import com.mascara.whatsapp.databinding.ActivityChatDetailBinding;
 import com.squareup.picasso.Picasso;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 public class ChatDetailActivity extends AppCompatActivity {
     private ActivityChatDetailBinding binding;
@@ -97,8 +99,10 @@ public class ChatDetailActivity extends AppCompatActivity {
         firebaseDatabase.getReference().child("chats")
                         .child(senderRoom)
                         .addValueEventListener(new ValueEventListener() {
+                            Long senderCount = Long.valueOf(0);
                             @Override
                             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                senderCount = snapshot.getChildrenCount();
                                 messageList.clear();
                                 for (DataSnapshot messageSnapshot : snapshot.getChildren()) {
                                     Messages messageModel = messageSnapshot.getValue(Messages.class);
@@ -109,6 +113,22 @@ public class ChatDetailActivity extends AppCompatActivity {
                                     messageList.add(messageModel);
                                 }
                                 chatAdapter.notifyDataSetChanged();
+                                firebaseDatabase.getReference()
+                                        .child("chats")
+                                        .child(receiverRoom)
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if (senderCount == snapshot.getChildrenCount()) {
+                                            setStatusForMessageReceiveList(senderRoom, receiverRoom);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
                             }
 
                             @Override
@@ -138,23 +158,52 @@ public class ChatDetailActivity extends AppCompatActivity {
                                         .setValue(messageModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void unused) {
-//                                                messageReceiveIdList.clear();
-//                                                firebaseDatabase.getReference().child("chats").child(receiverRoom).addValueEventListener(new ValueEventListener() {
-//                                                    @Override
-//                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                                                        String key = snapshot.getKey();
-//                                                        messageReceiveIdList.add(key);
-//                                                    }
-//
-//                                                    @Override
-//                                                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                                                    }
-//                                                });
+                                                //setStatusForMessageReceiveList(senderRoom, receiverRoom);
                                             }
                                         });
                             }
                         });
+            }
+        });
+    }
+    public void setStatusForMessageReceiveList(String senderRoom, String receiverRoom) {
+        ArrayList<Long> timeStampOfReceiveListDeleted = new ArrayList<>();
+        firebaseDatabase.getReference().child("chats").child(senderRoom).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot :  snapshot.getChildren()) {
+                    Messages mess = dataSnapshot.getValue(Messages.class);
+                    if (mess.getSttMessage() == 0) {
+                        timeStampOfReceiveListDeleted.add(mess.getTimestamp());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        firebaseDatabase.getReference().child("chats").child(receiverRoom).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    Messages mess = dataSnapshot.getValue(Messages.class);
+                    mess.setMessageId(dataSnapshot.getKey());
+                    for (Long timeStamp : timeStampOfReceiveListDeleted) {
+                        if (Long.valueOf(mess.getTimestamp()).equals(Long.valueOf(timeStamp)) && mess.getSttMessage() == 1) {
+                            HashMap<String, Object> obj = new HashMap<>();
+                            obj.put("sttMessage",0);
+                            firebaseDatabase.getReference().child("chats").child(receiverRoom).child(mess.getMessageId()).updateChildren(obj);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
